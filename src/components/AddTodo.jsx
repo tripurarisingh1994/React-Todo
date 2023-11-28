@@ -1,66 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TodoList from "./TodoList";
 
 function AddTodo() {
 
-    /*
-      [
-       { todoText: '' date: ''},
-       {},
-       {}
-      ]
-    */
+    const [todoTitle, setTodoTitle] = useState('');
+    const [dueDate, setDueDate] = useState('');
 
+    const [todo, setTodo] = useState([]);
 
-    const [todoText, setTodoText] = useState('');
-    const [date, setDate] = useState('');
-
-    const [todo, setTodo] = useState('');
+    useEffect(() => {
+        return () => {
+            setTodoTitle('')
+            setDueDate('')
+        }
+    }, [todo])
 
     function onEnterTheTodo(e) {
-        setTodoText(e.target.value);
+        setTodoTitle(e.target.value);
     }
 
     function onEnterTheDate(e) {
-        setDate(e.target.value);
+        setDueDate(e.target.value);
     }
 
     function add() {
+        const id = todo.length + 1;
 
-        console.log(todo)
-        setTodo('updated')
-        console.log(todo)
-        // const _todo = [...todo];
+        const newTodoItem = { id, todoTitle, dueDate }
 
-        // // console.log(_todo)
+        const newTodo = [...todo, newTodoItem];
 
-        // const newTodoItem = { todoText, date }
+        setTodo(newTodo)
 
-        // const newTodo = [...todo, newTodoItem];
+    }
 
-        // console.log(newTodo)
+    function deleteTodoItemHandler(id) {
 
-        // setTodo([...newTodo])
+        const idx = todo.findIndex(item => item.id === id)
 
-        // console.log(todo)
+        if (idx > -1) {
+            todo.splice(idx, 1);
+        }
+        const newTodo = [...todo]
+
+        setTodo(newTodo);
 
     }
 
     return (
         <>
-            <div class="row">
-                <div class="col-6">
-                    <input type="text" placeholder="Enter todo here" onChange={onEnterTheTodo} />
+            <div className="row">
+                <div className="col-6">
+                    <input type="text" value={todoTitle} placeholder="Enter Todo Title here" onChange={onEnterTheTodo} />
                 </div>
-                <div class="col-4">
-                    <input type="date" onChange={onEnterTheDate} />
+                <div className="col-4">
+                    <input type="date" value={dueDate} onChange={onEnterTheDate} />
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-success" onClick={add}>Add</button>
+                <div className="col-2">
+                    <button type="button" className="btn btn-success" onClick={add}>Add</button>
                 </div>
             </div>
 
-            <TodoList />
+            <TodoList todo={todo} deleteItemHandler={deleteTodoItemHandler} />
         </>
     )
 }
